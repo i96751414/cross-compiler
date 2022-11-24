@@ -10,19 +10,12 @@ endif
 DOCKER = docker
 
 # Platforms on which we want to build the project.
-PLATFORMS = \
-	android-arm \
-	android-arm64 \
-	android-x64 \
-	android-x86 \
-	darwin-x64 \
-	linux-arm \
-	linux-armv7 \
-	linux-arm64 \
-	linux-x64 \
-	linux-x86 \
-	windows-x64 \
-	windows-x86
+ANDROID_PLATFORMS = android-arm android-arm64 android-x64 android-x86
+DARWIN_PLATFORMS = darwin-x64
+LINUX_PLATFORMS = linux-arm linux-armv7 linux-arm64 linux-x64 linux-x86
+WINDOWS_PLATFORMS = windows-x64 windows-x86
+
+PLATFORMS = $(ANDROID_PLATFORMS) $(DARWIN_PLATFORMS) $(LINUX_PLATFORMS) $(WINDOWS_PLATFORMS)
 
 .PHONY: $(PLATFORMS)
 
@@ -32,13 +25,18 @@ all:
 	done
 
 base:
-	$(DOCKER) build -t $(PROJECT)/$(IMAGE_PREFIX)-base:$(TAG) .
+	$(DOCKER) build \
+		--tag $(PROJECT)/$(IMAGE_PREFIX)-base:$(TAG)-$(subst :,-,$(BASE_IMAGE)) \
+		--build-arg BASE_IMAGE=$(BASE_IMAGE) .
 
+$(WINDOWS_PLATFORMS): BASE_IMAGE ?= debian:buster
+$(ANDROID_PLATFORMS) $(DARWIN_PLATFORMS) $(LINUX_PLATFORMS): BASE_IMAGE ?= debian:stretch
 $(PLATFORMS): base
 	$(DOCKER) build \
-		-t $(PROJECT)/$(IMAGE_PREFIX)-$@:$(TAG) \
-		-t $(PROJECT)/$(IMAGE_PREFIX)-$@:latest \
-		--build-arg BASE_TAG=$(TAG) -f docker/$@.Dockerfile docker
+		--tag $(PROJECT)/$(IMAGE_PREFIX)-$@:$(TAG) \
+		--tag $(PROJECT)/$(IMAGE_PREFIX)-$@:latest \
+		--build-arg BASE_TAG=$(TAG)-$(subst :,-,$(BASE_IMAGE)) \
+		--file docker/$@.Dockerfile docker
 
 push:
 	docker push $(PROJECT)/$(IMAGE_PREFIX)-$(PLATFORM):latest
