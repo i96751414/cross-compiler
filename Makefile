@@ -29,8 +29,8 @@ base:
 		--tag $(PROJECT)/$(IMAGE_PREFIX)-base:$(TAG)-$(subst :,-,$(BASE_IMAGE)) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) .
 
-$(WINDOWS_PLATFORMS): BASE_IMAGE ?= debian:buster
-$(ANDROID_PLATFORMS) $(DARWIN_PLATFORMS) $(LINUX_PLATFORMS): BASE_IMAGE ?= debian:stretch
+$(ANDROID_PLATFORMS) $(WINDOWS_PLATFORMS): BASE_IMAGE ?= debian:bullseye
+$(DARWIN_PLATFORMS) $(LINUX_PLATFORMS): BASE_IMAGE ?= debian:stretch
 $(PLATFORMS): base
 	$(DOCKER) build \
 		--tag $(PROJECT)/$(IMAGE_PREFIX)-$@:$(TAG) \

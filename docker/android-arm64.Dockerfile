@@ -13,12 +13,12 @@ ENV CMAKE_TOOLCHAIN_FILE /home/android.cmake
 
 COPY cmake/android.cmake "${CMAKE_TOOLCHAIN_FILE}"
 
-RUN apt-get update && apt-get install -y --no-install-recommends python \
+RUN apt-get update && apt-get install -y --no-install-recommends python3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV NDK android-ndk-r20
-ENV ANDROID_NDK_API 21
+ENV NDK_VERION r25c
+ENV ANDROID_API 24
 ENV ANDROID_ARCH arm64
 
 COPY scripts/build_android_toolchain.sh /scripts/

@@ -48,10 +48,10 @@ And a selection of platform specific packages (see below).
 
 ### Platforms built
 
--   android-arm (android-ndk-r20 with api 21, clang)
--   android-arm64 (android-ndk-r20 with api 21, clang)
--   android-x64 (android-ndk-r20 with api 21, clang)
--   android-x86 (android-ndk-r20 with api 21, clang)
+-   android-arm (android-ndk-r25c with api 24, clang)
+-   android-arm64 (android-ndk-r25c with api 24, clang)
+-   android-x64 (android-ndk-r25c with api 24, clang)
+-   android-x86 (android-ndk-r25c with api 24, clang)
 -   darwin-x64 (clang-4.0, llvm-4.0-dev, libtool, libxml2-dev, uuid-dev, libssl-dev patch make cpio)
 -   linux-arm (gcc-4.8-arm-linux-gnueabihf with hardfp support for RaspberryPi)
 -   linux-armv7 (gcc-4.9.4 glibc-2.23 binutils-2.28.1 kernel-4.10.17 crosstool-ng)
