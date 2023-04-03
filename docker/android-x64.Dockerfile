@@ -24,5 +24,3 @@ ENV ANDROID_ARCH x86_64
 COPY scripts/build_android_toolchain.sh /scripts/
 RUN ./scripts/build_android_toolchain.sh \
     && rm -rf /scripts
-
-RUN ln -s "${CROSS_ROOT}/bin/${CROSS_TRIPLE}-clang" "${CROSS_ROOT}/bin/${CROSS_TRIPLE}-cc"

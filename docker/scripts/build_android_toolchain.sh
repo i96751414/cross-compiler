@@ -10,3 +10,8 @@ unzip "android-ndk-${NDK_VERION}-linux.zip" 1>log 2>err
   --stl=libc++ \
   --install-dir="${CROSS_ROOT}"
 cd / && rm -rf /tmp/*
+
+ln -s "${CROSS_ROOT}/bin/${CROSS_TRIPLE}-clang" "${CROSS_ROOT}/bin/${CROSS_TRIPLE}-cc"
+for i in ar as nm ranlib; do
+  ln -s "${CROSS_ROOT}/bin/llvm-${i}" "${CROSS_ROOT}/bin/${CROSS_TRIPLE}-${i}"
+done
