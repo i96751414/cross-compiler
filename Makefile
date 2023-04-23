@@ -30,7 +30,7 @@ base:
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) .
 
 $(ANDROID_PLATFORMS) $(WINDOWS_PLATFORMS): BASE_IMAGE ?= debian:bullseye
-$(DARWIN_PLATFORMS) $(LINUX_PLATFORMS): BASE_IMAGE ?= debian:stretch
+$(DARWIN_PLATFORMS) $(LINUX_PLATFORMS): BASE_IMAGE ?= debian:buster
 $(PLATFORMS): base
 	$(DOCKER) build \
 		--tag $(PROJECT)/$(IMAGE_PREFIX)-$@:$(TAG) \

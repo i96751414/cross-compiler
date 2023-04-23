@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=debian:stretch
+ARG BASE_IMAGE=debian:buster
 FROM ${BASE_IMAGE}
 
 ARG CMAKE_VERSION=3.20.3
