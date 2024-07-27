@@ -11,17 +11,17 @@ COPY \
     crosstool-ng/linux-arm64.config \
     /tmp/
 
-ENV XCC_PREFIX /usr/xcc
+ENV XCC_PREFIX="/usr/xcc"
 # Build and install the toolchain, cleaning up artifacts afterwards.
 RUN cd /tmp \
     && /tmp/install-crosstool-ng-toolchain.sh -p "${XCC_PREFIX}" -c /tmp/*.config -r 10ac846d423ec7fc96e4cd23d6bea246d786d572 \
     && rm -rf /tmp/*
 
-ENV CROSS_TRIPLE aarch64-unknown-linux-gnu
-ENV CROSS_ROOT ${XCC_PREFIX}/${CROSS_TRIPLE}
-ENV PATH ${PATH}:${CROSS_ROOT}/bin
-ENV LD_LIBRARY_PATH ${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}
-ENV PKG_CONFIG_PATH ${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}
-ENV CMAKE_TOOLCHAIN_FILE /home/linux.cmake
+ENV CROSS_TRIPLE="aarch64-unknown-linux-gnu"
+ENV CROSS_ROOT="${XCC_PREFIX}/${CROSS_TRIPLE}"
+ENV PATH="${PATH}:${CROSS_ROOT}/bin"
+ENV LD_LIBRARY_PATH="${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}"
+ENV PKG_CONFIG_PATH="${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+ENV CMAKE_TOOLCHAIN_FILE="/home/linux.cmake"
 
 COPY cmake/linux.cmake "${CMAKE_TOOLCHAIN_FILE}"

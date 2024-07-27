@@ -7,12 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CROSS_TRIPLE i686-linux-gnu
-ENV CROSS_ROOT /usr/i686-linux-gnu
-ENV PATH ${PATH}:${CROSS_ROOT}/bin
-ENV LD_LIBRARY_PATH ${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}
-ENV PKG_CONFIG_PATH ${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}
-ENV CMAKE_TOOLCHAIN_FILE /home/linux.cmake
+ENV CROSS_TRIPLE="i686-linux-gnu"
+ENV CROSS_ROOT="/usr/i686-linux-gnu"
+ENV PATH="${PATH}:${CROSS_ROOT}/bin"
+ENV LD_LIBRARY_PATH="${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}"
+ENV PKG_CONFIG_PATH="${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+ENV CMAKE_TOOLCHAIN_FILE="/home/linux.cmake"
 
 COPY cmake/linux.cmake "${CMAKE_TOOLCHAIN_FILE}"
 

@@ -5,12 +5,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends mingw-w64 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CROSS_TRIPLE i686-w64-mingw32
-ENV CROSS_ROOT /usr/${CROSS_TRIPLE}
-ENV PATH ${PATH}:${CROSS_ROOT}/bin
-ENV LD_LIBRARY_PATH ${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}
-ENV PKG_CONFIG_PATH ${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}
-ENV CMAKE_TOOLCHAIN_FILE /home/mingw.cmake
+ENV CROSS_TRIPLE="i686-w64-mingw32"
+ENV CROSS_ROOT="/usr/${CROSS_TRIPLE}"
+ENV PATH="${PATH}:${CROSS_ROOT}/bin"
+ENV LD_LIBRARY_PATH="${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}"
+ENV PKG_CONFIG_PATH="${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+ENV CMAKE_TOOLCHAIN_FILE="/home/mingw.cmake"
 
 COPY cmake/mingw.cmake "${CMAKE_TOOLCHAIN_FILE}"
 

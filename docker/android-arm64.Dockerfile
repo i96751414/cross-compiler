@@ -1,16 +1,16 @@
 ARG BASE_TAG=latest
 FROM i96751414/cross-compiler-base:${BASE_TAG}
 
-ENV CROSS_TRIPLE aarch64-linux-android
-ENV CROSS_ROOT /usr/${CROSS_TRIPLE}
-ENV ANDROID_NDK ${CROSS_ROOT}
-ENV PATH ${PATH}:${CROSS_ROOT}/bin
-ENV LD_LIBRARY_PATH ${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}
-ENV PKG_CONFIG_PATH ${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}
+ENV CROSS_TRIPLE="aarch64-linux-android"
+ENV CROSS_ROOT="/usr/${CROSS_TRIPLE}"
+ENV ANDROID_NDK="${CROSS_ROOT}"
+ENV PATH="${PATH}:${CROSS_ROOT}/bin"
+ENV LD_LIBRARY_PATH="${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}"
+ENV PKG_CONFIG_PATH="${CROSS_ROOT}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
-ENV SYSTEM_PROCESSOR aarch64
-ENV ANDROID_ARCH_ABI arm64-v8a
-ENV CMAKE_TOOLCHAIN_FILE /home/android.cmake
+ENV SYSTEM_PROCESSOR="aarch64"
+ENV ANDROID_ARCH_ABI="arm64-v8a"
+ENV CMAKE_TOOLCHAIN_FILE="/home/android.cmake"
 
 COPY cmake/android.cmake "${CMAKE_TOOLCHAIN_FILE}"
 
@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV NDK_VERION r25c
-ENV ANDROID_API 24
-ENV ANDROID_ARCH arm64
+ENV NDK_VERION="r25c"
+ENV ANDROID_API="24"
+ENV ANDROID_ARCH="arm64"
 
 COPY scripts/build_android_toolchain.sh /scripts/
 RUN ./scripts/build_android_toolchain.sh \
