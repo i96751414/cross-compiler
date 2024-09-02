@@ -13,7 +13,9 @@ DOCKER = docker
 ANDROID_PLATFORMS = android-arm android-arm64 android-x64 android-x86
 DARWIN_PLATFORMS = darwin-x64
 LINUX_PLATFORMS = linux-arm linux-armv7 linux-arm64 linux-x64 linux-x86
-WINDOWS_PLATFORMS = windows-x64 windows-x86
+WINDOWS_PLATFORMS = windows-x64 windows-x86 \
+	windows-x64-shared windows-x64-static windows-x64-static-posix \
+	windows-x86-shared windows-x86-static windows-x86-static-posix
 
 PLATFORMS = $(ANDROID_PLATFORMS) $(DARWIN_PLATFORMS) $(LINUX_PLATFORMS) $(WINDOWS_PLATFORMS)
 

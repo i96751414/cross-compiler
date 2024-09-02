@@ -22,6 +22,6 @@ ENV NDK_VERION="r25c"
 ENV ANDROID_API="24"
 ENV ANDROID_ARCH="arm"
 
-COPY scripts/build_android_toolchain.sh /scripts/
-RUN ./scripts/build_android_toolchain.sh \
+COPY scripts/build-android-toolchain.sh /scripts/
+RUN ./scripts/build-android-toolchain.sh \
     && rm -rf /scripts
