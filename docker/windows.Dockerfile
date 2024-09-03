@@ -1,11 +1,13 @@
 ARG BASE_TAG=latest
 FROM i96751414/cross-compiler-base:${BASE_TAG}
 
+ARG CROSS_TRIPLE
+
 RUN apt-get update && apt-get install -y --no-install-recommends mingw-w64 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV CROSS_TRIPLE="i686-w64-mingw32"
+ENV CROSS_TRIPLE="${CROSS_TRIPLE}"
 ENV CROSS_ROOT="/usr/${CROSS_TRIPLE}"
 ENV PATH="${PATH}:${CROSS_ROOT}/bin"
 ENV LD_LIBRARY_PATH="${CROSS_ROOT}/lib:${LD_LIBRARY_PATH}"

@@ -3,9 +3,6 @@ set -eo pipefail
 
 : "${PREFIX=usr/}"
 : "${MXE_REV=9f349e0de62a4a68bfc0f13d835a6c685dae9daa}"
-: "${MXE_TARGET_ARCH=x86_64}"
-: "${MXE_TARGET_LINK=static}"
-: "${MXE_TARGET_THREAD=win32}"
 
 function invalidOpt() {
   echo "Invalid option/argument provided: $1"
@@ -21,16 +18,18 @@ function validateNotEmpty() {
 
 function usage() {
   cat <<EOF
-Usage: $(basename "${0}") [OPTIONS]
+Usage: $(basename "${0}") [OPTIONS] -- [TARGET...]
 
 Script for building and install MinGW-w64 toolchain using MXE.
+
+single target build arguments (only applicable if no targets are provided):
+  -a, --arch ARCH        The toolchain architecture. Must be either x86_64 or i686 (default: x86_64)
+  -l, --link LINK        The linking type. Must be either static or shared (default: static)
+  --posix                Use POSIX threading libraries instead of Win32
 
 optional arguments:
   -p, --prefix PREFIX    The toolchain prefix (default: usr/)
   -r, --rev REV          The MXE revision
-  -a, --arch ARCH        The toolchain architecture. Must be either x86_64 or i686 (default: x86_64)
-  -l, --link LINK        The linking type. Must be either static or shared (default: static)
-  --posix                Use POSIX threading libraries instead of Win32
   --install-dependencies Install MXE dependencies
   -h, --help             Show this message
 
@@ -38,14 +37,16 @@ EOF
   exit "$1"
 }
 
+expecting_targets=true
+
 while [ $# -gt 0 ]; do
   case "$1" in
   --) shift; break ;;
   -p | --prefix)  validateNotEmpty "$2" "$1"; shift; PREFIX="$1" ;;
   -r | --rev) validateNotEmpty "$2" "$1"; shift; MXE_REV="$1" ;;
-  -a | --arch) validateNotEmpty "$2" "$1"; shift; MXE_TARGET_ARCH="$1" ;;
-  -l | --link) validateNotEmpty "$2" "$1"; shift; MXE_TARGET_LINK="$1" ;;
-  --posix) MXE_TARGET_THREAD=posix ;;
+  -a | --arch) validateNotEmpty "$2" "$1"; shift; MXE_TARGET_ARCH="$1"; expecting_targets=false ;;
+  -l | --link) validateNotEmpty "$2" "$1"; shift; MXE_TARGET_LINK="$1"; expecting_targets=false ;;
+  --posix) MXE_TARGET_THREAD=posix; expecting_targets=false ;;
   --install-dependencies) MXE_INSTALL_DEPENDENCIES=true ;;
   -h | --help) usage 0 ;;
   -*) invalidOpt "$1" ;;
@@ -55,25 +56,36 @@ while [ $# -gt 0 ]; do
 done
 
 if [ $# -gt 0 ]; then
-  echo "No positional arguments expected"
-  usage 1
-fi
+  if [ "${expecting_targets}" = false ]; then
+    echo "No positional arguments expected for single target build"
+    usage 1
+  fi
+  targets="$*"
+elif [ -n "${MXE_TARGETS}" ] && [ "${expecting_targets}" = true ]; then
+  targets="${MXE_TARGETS}"
+else
+  : "${MXE_TARGET_ARCH=x86_64}"
+  : "${MXE_TARGET_LINK=static}"
+  : "${MXE_TARGET_THREAD=win32}"
 
-if [ "${MXE_TARGET_ARCH}" != x86_64 ] && [ "${MXE_TARGET_ARCH}" != i686 ]; then
-  echo "Target arch (MXE_TARGET_ARCH) must be either x86_64 or i686"
-  usage 1
-fi
+  if [ "${MXE_TARGET_ARCH}" != x86_64 ] && [ "${MXE_TARGET_ARCH}" != i686 ]; then
+    echo "Target arch (MXE_TARGET_ARCH) must be either x86_64 or i686"
+    usage 1
+  fi
 
-if [ "${MXE_TARGET_LINK}" != static ] && [ "${MXE_TARGET_LINK}" != shared ]; then
-  echo "Target link (MXE_TARGET_LINK) must be either static or shared"
-  usage 1
-fi
+  if [ "${MXE_TARGET_LINK}" != static ] && [ "${MXE_TARGET_LINK}" != shared ]; then
+    echo "Target link (MXE_TARGET_LINK) must be either static or shared"
+    usage 1
+  fi
 
-case "${MXE_TARGET_THREAD}" in
-posix) MXE_TARGET_THREAD=".${MXE_TARGET_THREAD}" ;;
-win32) MXE_TARGET_THREAD= ;;
-*) echo "Target thread (MXE_TARGET_THREAD) must be either win32 or posix." && usage 1
-esac
+  case "${MXE_TARGET_THREAD}" in
+  posix) MXE_TARGET_THREAD=".${MXE_TARGET_THREAD}" ;;
+  win32) MXE_TARGET_THREAD= ;;
+  *) echo "Target thread (MXE_TARGET_THREAD) must be either win32 or posix."; usage 1
+  esac
+
+  targets="${MXE_TARGET_ARCH}-w64-mingw32.${MXE_TARGET_LINK}${MXE_TARGET_THREAD}"
+fi
 
 if [ "${MXE_INSTALL_DEPENDENCIES}" = true ]; then
   echo "- Installing MXE dependencies"
@@ -87,7 +99,6 @@ if [ "${MXE_INSTALL_DEPENDENCIES}" = true ]; then
     && rm -rf /var/lib/apt/lists/*
 fi
 
-target="${MXE_TARGET_ARCH}-w64-mingw32.${MXE_TARGET_LINK}${MXE_TARGET_THREAD}"
 mxe_src="$(mktemp -d /tmp/mxe-XXXXXXXXXXX)"
 trap 'rm -rf "${mxe_src}"' EXIT
 cd "${mxe_src}"
@@ -97,7 +108,7 @@ wget "https://github.com/mxe/mxe/archive/${MXE_REV}.tar.gz" -qO- | tar -C "${mxe
 
 echo "- Creating settings.mk"
 cat <<EOF > settings.mk
-MXE_TARGETS := ${target}
+MXE_TARGETS := ${targets}
 MXE_USE_CCACHE :=
 MXE_PLUGIN_DIRS := plugins/gcc11
 LOCAL_PKG_LIST := cc cmake
@@ -105,6 +116,6 @@ LOCAL_PKG_LIST := cc cmake
 local-pkg-list: \$(LOCAL_PKG_LIST)
 EOF
 
-echo "- Building MXE toolchain (${target})"
+echo "- Building MXE toolchain (${targets})"
 make "JOBS=$(nproc)" "PREFIX=${PREFIX}"
-echo "- MXE toolchain (${target}) built to ${PREFIX}"
+echo "- MXE toolchain (${targets}) built to ${PREFIX}"

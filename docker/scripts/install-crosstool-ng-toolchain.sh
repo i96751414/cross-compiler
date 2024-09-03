@@ -56,7 +56,7 @@ mkdir -p "${CTNG}"
 # Download and install the "crosstool-ng" source.
 CTNG_SRC="${CTNG}/crosstool-ng-src"
 mkdir -p "${CTNG_SRC}"
-curl -# -L "https://github.com/crosstool-ng/crosstool-ng/archive/${REV}.tar.gz" | tar -C "${CTNG_SRC}" --strip=1 -xz
+curl -sS -L "https://github.com/crosstool-ng/crosstool-ng/archive/${REV}.tar.gz" | tar -C "${CTNG_SRC}" --strip=1 -xz
 cd "${CTNG_SRC}"
 
 # Fix for expat in old crosstool-ng versions
